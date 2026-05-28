@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polaris Checklist - İlerleme Takibi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1428 100%);
+            color: #e0e6ff;
+            min-height: 100vh;
+            padding: 20px 15px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background stars */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.3), transparent),
+                radial-gradient(2px 2px at 60% 70%, rgba(255,255,255,0.2), transparent),
+                radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,0.3), transparent),
+                radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.2), transparent),
+                radial-gradient(2px 2px at 90% 60%, rgba(255,255,255,0.25), transparent),
+                radial-gradient(1px 1px at 33% 80%, rgba(255,255,255,0.2), transparent);
+            background-size: 200% 200%;
+            animation: stars 60s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes stars {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(0, 115, 234, 0.15) 0%, rgba(157, 80, 221, 0.15) 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 115, 234, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 115, 234, 0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00d4ff 0%, #0073ea 50%, #9d50dd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .overall-progress {
+            font-size: 18px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .board-link {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #0073ea 0%, #0060b9 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 15px rgba(0, 115, 234, 0.4);
+        }
+
+        .board-link:hover {
+            background: linear-gradient(135deg, #0060b9 0%, #004a8f 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 115, 234, 0.6);
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(10, 14, 39, 0.6);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .filter-group, .sort-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .sort-group {
+            min-width: 200px;
+        }
+
+        .control-label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #00d4ff;
+            margin-right: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-btn, .sort-btn {
+            padding: 6px 14px;
+            background: rgba(0, 115, 234, 0.2);
+            border: 1px solid rgba(0, 115, 234, 0.4);
+            color: #00d4ff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-btn:hover, .sort-btn:hover {
+            background: rgba(0, 115, 234, 0.3);
+            border-color: rgba(0, 212, 255, 0.6);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #0073ea 0%, #0060b9 100%);
+            border-color: #00d4ff;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 115, 234, 0.5);
+        }
+
+        /* Items Grid */
+        .items-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .item-card {
+            background: linear-gradient(135deg, rgba(26, 31, 58, 0.8) 0%, rgba(15, 20, 40, 0.8) 100%);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .item-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .item-card:hover::before {
+            left: 100%;
+        }
+
+        .item-card:hover {
+            border-color: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .item-card.completed {
+            border-color: rgba(0, 200, 117, 0.4);
+        }
+
+        .item-card.completed:hover {
+            border-color: rgba(0, 200, 117, 0.6);
+            box-shadow: 0 8px 25px rgba(0, 200, 117, 0.3);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .item-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #00d4ff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            flex: 1;
+            line-height: 1.3;
+        }
+
+        .item-name:hover {
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+        }
+
+        .item-stats {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .item-count {
+            font-size: 14px;
+            color: #a0a8cc;
+        }
+
+        .item-percent {
+            font-size: 16px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(0, 115, 234, 0.2);
+        }
+
+        .item-percent.complete {
+            color: #00c875;
+            background: rgba(0, 200, 117, 0.2);
+        }
+
+        .item-percent.in-progress {
+            color: #fdab3d;
+            background: rgba(253, 171, 61, 0.2);
+        }
+
+        .item-percent.not-started {
+            color: #df2f4a;
+            background: rgba(223, 47, 74, 0.2);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease, background 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-bar.complete {
+            background: linear-gradient(90deg, #00c875 0%, #00a862 100%);
+            box-shadow: 0 0 10px rgba(0, 200, 117, 0.5);
+        }
+
+        .progress-bar.in-progress {
+            background: linear-gradient(90deg, #fdab3d 0%, #ff8c00 100%);
+            box-shadow: 0 0 10px rgba(253, 171, 61, 0.5);
+        }
+
+        .progress-bar.not-started {
+            background: linear-gradient(90deg, #df2f4a 0%, #bb1e3b 100%);
+            box-shadow: 0 0 10px rgba(223, 47, 74, 0.5);
+        }
+
+        .no-items {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #676879;
+            background: rgba(26, 31, 58, 0.6);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px 10px;
+            }
+
+            .title {
+                font-size: 22px;
+            }
+
+            .overall-progress {
+                font-size: 16px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .filter-group, .sort-group {
+                width: 100%;
+            }
+
+            .item-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        /* Loading animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .item-card {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">⭐ Polaris Checklist ⭐</h1>
+            <div class="overall-progress" id="overallProgress">
+                Yükleniyor...
+            </div>
+            <a href="https://fgenc138s-team.monday.com/boards/5097376498" target="_blank" class="board-link">
+                📋 Monday.com'da Aç
+            </a>
+        </div>
+
+        <div class="controls">
+            <div class="filter-group">
+                <span class="control-label">Filtre:</span>
+                <button class="filter-btn active" data-filter="all">Tümü</button>
+                <button class="filter-btn" data-filter="completed">Tamamlandı</button>
+                <button class="filter-btn" data-filter="in-progress">Devam Ediyor</button>
+                <button class="filter-btn" data-filter="not-started">Başlanmadı</button>
+            </div>
+            <div class="sort-group">
+                <span class="control-label">Sırala:</span>
+                <button class="sort-btn" data-sort="name">İsim</button>
+                <button class="sort-btn" data-sort="progress">İlerleme</button>
+            </div>
+        </div>
+
+        <div class="items-grid" id="itemsGrid">
+            <!-- Items will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const data = {
+            "board_name": "Polaris Checklist",
+            "board_url": "https://fgenc138s-team.monday.com/boards/5097376498",
+            "items": [
+                {"name": "50x Wikelo Favors", "target": 50, "current": 0, "percent": 0, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946312289"},
+                {"name": "15x Polaris Bits", "target": 15, "current": 0, "percent": 0, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946335184"},
+                {"name": "10x DCHS-05 Comp-Board", "target": 10, "current": 0, "percent": 0, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946312661"},
+                {"name": "20x Irradiated Valakkar Fang (Apex)", "target": 20, "current": 6, "percent": 30, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946350179"},
+                {"name": "15x Ace Interceptor Helmet", "target": 15, "current": 0, "percent": 0, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946360379"},
+                {"name": "15x Irradiated Valakkar Pearl (Grade AAA)", "target": 15, "current": 0, "percent": 0, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946350245"},
+                {"name": "15x UEE 6th Platoon Medal (Pristine)", "target": 15, "current": 1, "percent": 7, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946359855"},
+                {"name": "15x Carinite (Pure)", "target": 15, "current": 1, "percent": 7, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946248910"},
+                {"name": "20x MG Scrip", "target": 20, "current": 20, "percent": 100, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946360859"},
+                {"name": "20x Carinite", "target": 20, "current": 20, "percent": 100, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946359814"},
+                {"name": "15x ASD Secure Drive", "target": 15, "current": 15, "percent": 100, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946350628"},
+                {"name": "1x RCMBNT-PWL-1", "target": 1, "current": 1, "percent": 100, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946350550"},
+                {"name": "1x RCMBNT-PWL-2", "target": 1, "current": 1, "percent": 100, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946248409"},
+                {"name": "1x RCMBNT-PWL-3", "target": 1, "current": 1, "percent": 100, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946350629"},
+                {"name": "1x RCMBNT-RGL-1", "target": 1, "current": 1, "percent": 100, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946360864"},
+                {"name": "1x RCMBNT-RGL-2", "target": 1, "current": 1, "percent": 100, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946360540"},
+                {"name": "1x RCMBNT-RGL-3", "target": 1, "current": 1, "percent": 100, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946360862"},
+                {"name": "1x RCMBNT-XTL-1", "target": 1, "current": 1, "percent": 100, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946360865"},
+                {"name": "1x RCMBNT-XTL-2", "target": 1, "current": 1, "percent": 100, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946350549"},
+                {"name": "1x RCMBNT-XTL-3", "target": 1, "current": 1, "percent": 100, "url": "https://fgenc138s-team.monday.com/boards/5097376498/pulses/2946360863"}
+            ]
+        };
+
+        let currentFilter = 'all';
+        let currentSort = null;
+        let items = [...data.items];
+
+        function getStatusClass(percent) {
+            if (percent === 100) return 'complete';
+            if (percent > 0) return 'in-progress';
+            return 'not-started';
+        }
+
+        function getStatusFilter(percent) {
+            if (percent === 100) return 'completed';
+            if (percent > 0) return 'in-progress';
+            return 'not-started';
+        }
+
+        function updateOverallProgress() {
+            const completedItems = items.filter(item => item.percent === 100).length;
+            const totalItems = items.length;
+            const overallPercent = Math.round((completedItems / totalItems) * 100);
+            
+            document.getElementById('overallProgress').innerHTML = `
+                <strong>${completedItems}/${totalItems}</strong> item tamamlandı 
+                (<strong>${overallPercent}%</strong> genel ilerleme)
+            `;
+        }
+
+        function renderItems() {
+            const grid = document.getElementById('itemsGrid');
+            let filteredItems = items;
+
+            // Apply filter
+            if (currentFilter !== 'all') {
+                filteredItems = items.filter(item => getStatusFilter(item.percent) === currentFilter);
+            }
+
+            // Apply sort
+            if (currentSort === 'name') {
+                filteredItems.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (currentSort === 'progress') {
+                filteredItems.sort((a, b) => b.percent - a.percent);
+            }
+
+            if (filteredItems.length === 0) {
+                grid.innerHTML = '<div class="no-items">Bu filtreye uygun item bulunamadı.</div>';
+                return;
+            }
+
+            grid.innerHTML = filteredItems.map((item, index) => {
+                const statusClass = getStatusClass(item.percent);
+                const cardClass = item.percent === 100 ? 'completed' : '';
+                
+                return `
+                    <div class="item-card ${cardClass}" style="animation-delay: ${index * 0.05}s">
+                        <div class="item-header">
+                            <a href="${item.url}" target="_blank" class="item-name">
+                                ${item.name}
+                            </a>
+                            <div class="item-stats">
+                                <span class="item-count">${item.current}/${item.target}</span>
+                                <span class="item-percent ${statusClass}">${item.percent}%</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar ${statusClass}" style="width: ${item.percent}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderItems();
+            });
+        });
+
+        // Sort buttons
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const sortType = btn.dataset.sort;
+                if (currentSort === sortType) {
+                    // Toggle sort direction by reversing
+                    items.reverse();
+                } else {
+                    currentSort = sortType;
+                }
+                renderItems();
+            });
+        });
+
+        // Initial render
+        updateOverallProgress();
+        renderItems();
+    </script>
+</body>
+</html>
